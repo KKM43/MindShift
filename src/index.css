@@ -52,7 +52,6 @@ body {
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -361,19 +360,17 @@ body {
 
 /* ── Sidebar ── */
 .sidebar {
-  width: 100%;
+  width: 220px;
   background: var(--cream-deep);
   border-right: 1px solid var(--border);
   padding: 28px 16px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 6px;
   flex-shrink: 0;
-  position: relative;       
-  overflow-x: auto;
-  white-space: nowrap;    
+  position: sticky;           
   top: 0;
-  height: auto;             
+  height: 100vh;             
   overflow-y: auto;          
   z-index: 10;
 }
@@ -418,7 +415,7 @@ body {
 
 .sidebar-nav {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2px;
   flex: 1;
 }
@@ -426,7 +423,6 @@ body {
 .nav-btn {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
   gap: 8px;
   padding: 10px 12px;
   border: none;
@@ -656,7 +652,7 @@ body {
 .chat-container {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 96px);
+  height: calc(100vh - 96px);
 }
 
 .chat-header {
