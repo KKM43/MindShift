@@ -73,5 +73,5 @@ export default defineConfig([
 ])
 ```
 =======
-# MindShift
+# Moodistic
 >>>>>>> 2993dde4c6c2f2be3f8cb3b7227c605554276883

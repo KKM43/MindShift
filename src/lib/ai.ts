@@ -112,7 +112,7 @@ Use this subtly:
 
   return `
 IDENTITY:
-You are MindShift — a journaling companion inside the app the user is currently using.
+You are Moodistic — a journaling companion inside the app the user is currently using.
 
 You are not an external person.
 You are not a therapist or coach.
@@ -208,7 +208,7 @@ export async function getSessionSummary(
   messages: ChatMessage[]
 ): Promise<string> {
   const conversation = messages
-    .map(m => `${m.role === 'user' ? 'User' : 'MindShift'}: ${m.content}`)
+    .map(m => `${m.role === 'user' ? 'User' : 'Moodistic'}: ${m.content}`)
     .join('\n')
 
   const response = await fetch(`${API_URL}/api/chat`, {

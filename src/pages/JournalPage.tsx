@@ -190,7 +190,7 @@ export default function JournalPage({ showHistory = false }: Props) {
       const summary = await getSessionSummary(messages);
 
       const fullConversation = messages
-        .map((m) => `${m.role === "user" ? "You" : "MindShift"}: ${m.content}`)
+        .map((m) => `${m.role === "user" ? "You" : "Moodistic"}: ${m.content}`)
         .join("\n\n");
 
       const { error } = await saveEntry(fullConversation, summary, mood);
@@ -245,10 +245,10 @@ export default function JournalPage({ showHistory = false }: Props) {
             content: line.replace("You: ", ""),
             timestamp: new Date(),
           };
-        } else if (line.startsWith("MindShift:")) {
+        } else if (line.startsWith("Moodistic:")) {
           return {
             role: "assistant" as const,
-            content: line.replace("MindShift: ", ""),
+            content: line.replace("Moodistic: ", ""),
             timestamp: new Date(),
           };
         }
@@ -378,7 +378,7 @@ export default function JournalPage({ showHistory = false }: Props) {
                             <div className="chat-avatar">
                               <img
                                 src="/icons/logo.png"
-                                alt="MindShift Assistant"
+                                alt="Moodistic Assistant"
                               />
                             </div>
                           )}
@@ -398,7 +398,7 @@ export default function JournalPage({ showHistory = false }: Props) {
                       {loading && (
                         <div className="chat-bubble-wrap ai-wrap">
                           <div className="chat-avatar">
-                            <img src="/icons/logo.png" alt="MindShift" />
+                            <img src="/icons/logo.png" alt="Moodistic" />
                           </div>
 
                           <div className="chat-bubble bubble-ai typing-indicator">
@@ -510,7 +510,7 @@ export default function JournalPage({ showHistory = false }: Props) {
                         >
                           {msg.role === "assistant" && (
                             <div className="chat-avatar">
-                              <img src="/icons/logo.png" alt="MindShift" />
+                              <img src="/icons/logo.png" alt="Moodistic" />
                             </div>
                           )}
                           <div

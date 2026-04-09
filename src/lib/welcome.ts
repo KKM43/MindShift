@@ -7,7 +7,7 @@ export async function getWelcomeMessage(
   const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
 
   if (entries.length === 0) {
-    return "hey, welcome to MindShift! this is your private space — no judgment, no pressure. whenever you're ready, just start talking."
+    return "hey, welcome to Moodistic! this is your private space — no judgment, no pressure. whenever you're ready, just start talking."
   }
 
   const lastEntry = entries[0]

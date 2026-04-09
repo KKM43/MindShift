@@ -27,8 +27,8 @@ export default function Sidebar({
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <img src="/icons/logo.png" alt="MindShift" className="sidebar-logo" />
-        <span className="sidebar-title">MindShift</span>
+        <img src="/icons/logo.png" alt="Moodistic" className="sidebar-logo" />
+        <span className="sidebar-title">Moodistic</span>
       </div>
 
       <div className="sidebar-user">

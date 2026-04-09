@@ -26,7 +26,7 @@ app.use(express.json({ limit: "10mb" }));
 app.set("trust proxy", 1);
 
 app.get("/", (_, res) => {
-  res.send("MindShift API is running");
+  res.send("Moodistic API is running");
 });
 
 app.get("/health", (_, res) => res.json({ status: "ok" }));
@@ -136,4 +136,4 @@ app.post("/api/chat", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`MindShift server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Moodistic server running on port ${PORT}`));

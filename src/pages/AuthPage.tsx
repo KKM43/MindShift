@@ -154,10 +154,10 @@ export default function AuthPage() {
             <div className="auth-brand">
               <img
                 src="/icons/logo.png"
-                alt="MindShift"
+                alt="Moodistic"
                 className="brand-logo"
               />
-              <h1 className="brand-name">MindShift</h1>
+              <h1 className="brand-name">Moodistic</h1>
               <p className="brand-tagline">
                 Your private space to think, feel, and refocus.
               </p>
