@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import LanguageSelector from "./LanguageSelector";
 import type { AppLanguage } from "../types";
+import { useState } from "react";
 
 interface Props {
   entryCount?: number;
@@ -12,67 +12,87 @@ interface Props {
 
 export default function Sidebar({
   entryCount = 0,
-  language = "en",
-  onLanguageChange,
   onSignOutClick,
 }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
   const isJournal = location.pathname === "/journal";
   const isPastSessions = location.pathname === "/past-sessions";
   const isInsights = location.pathname === "/insights";
 
+  const handleNavClick = (path: string) => {
+    navigate(path);
+    setIsOpen(false);
+  };
+
+  const handleSignOut = () => {
+    setIsOpen(false);
+    onSignOutClick ? onSignOutClick() : signOut();
+  };
+
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-        <img src="/icons/logo.png" alt="Moodistic" className="sidebar-logo" />
-        <span className="sidebar-title">Moodistic</span>
-      </div>
-
-      <div className="sidebar-user">
-        Hey{" "}
-        {user?.user_metadata?.full_name
-          ? user.user_metadata.full_name.split(" ")[0]
-          : user?.email?.split("@")[0]}
-        !
-      </div>
-
-      <nav className="sidebar-nav">
-        <button
-          className={`nav-btn ${isJournal && !isPastSessions ? "nav-active" : ""}`}
-          onClick={() => navigate("/journal")}
-        >
-          ✏️ New Session
-        </button>
-
-        <button
-          className={`nav-btn ${isPastSessions ? "nav-active" : ""}`}
-          onClick={() => navigate("/past-sessions")}
-        >
-          📖 Past Sessions
-          {entryCount > 0 && <span className="entry-count">{entryCount}</span>}
-        </button>
-
-        <button
-          className={`nav-btn ${isInsights ? "nav-active" : ""}`}
-          onClick={() => navigate("/insights")}
-        >
-          📈 Insights
-        </button>
-
-        {onLanguageChange && (
-          <div className="sidebar-lang">
-            <p className="sidebar-lang-label">Language</p>
-            <LanguageSelector selected={language} onChange={onLanguageChange} />
-          </div>
-        )}
-      </nav>
-
-      <button className="signout-btn" onClick={onSignOutClick || signOut}>
-        Sign Out
+    <>
+      <button
+        className="mobile-hamburger"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Open menu"
+      >
+        {isOpen ? "✕" : "☰"}
       </button>
-    </aside>
+
+      
+      {isOpen && (
+        <div
+          className="sidebar-overlay show"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+        <div className="sidebar-brand">
+          <img src="/icons/logo.png" alt="Moodistic" className="sidebar-logo" />
+          <span className="sidebar-title">Moodistic</span>
+        </div>
+
+        <div className="sidebar-user">
+  Hey, {user?.user_metadata?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "there"} 👋
+</div>
+
+        <nav className="sidebar-nav">
+          <button
+            className={`nav-btn ${isJournal && !isPastSessions ? "nav-active" : ""}`}
+            onClick={() => handleNavClick("/journal")}
+          >
+            ✏️ New Session
+          </button>
+
+          <button
+            className={`nav-btn ${isPastSessions ? "nav-active" : ""}`}
+            onClick={() => handleNavClick("/past-sessions")}
+          >
+            📖 Past Sessions
+            {entryCount > 0 && (
+              <span className="entry-count">{entryCount}</span>
+            )}
+          </button>
+
+          <button
+            className={`nav-btn ${isInsights ? "nav-active" : ""}`}
+            onClick={() => handleNavClick("/insights")}
+          >
+            📈 Insights
+          </button>
+
+          
+        </nav>
+
+        <button className="signout-btn" onClick={handleSignOut}>
+          Sign Out
+        </button>
+      </aside>
+    </>
   );
 }

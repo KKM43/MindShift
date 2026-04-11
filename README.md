@@ -1,77 +1,68 @@
-<<<<<<< HEAD
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-=======
 # Moodistic
->>>>>>> 2993dde4c6c2f2be3f8cb3b7227c605554276883
+
+Moodistic is a React + TypeScript journaling app with AI-powered mood tracking, insights, and language support. It uses Supabase for authentication and database storage, along with a small Express backend for AI request proxying.
+
+## Features
+
+- Journal entry creation with AI-driven reflection and mood analysis
+- Mood tracking and history view
+- Insights page with charts, sentiment summaries, and mood trends
+- Multi-language support (English, Hindi, Marathi)
+- Supabase authentication and secure session handling
+- Backend proxy for AI model requests and mood honesty analysis
+
+## Repository Structure
+
+- `src/`
+  - `App.tsx` - app routing and authenticated route handling
+  - `main.tsx` - React app entry point
+  - `pages/` - page components for auth, journal, insights, and password reset
+  - `components/` - reusable UI components like mood selectors, charts, sidebar, and modals
+  - `hooks/` - custom hooks for auth, journal state, insights, and language selection
+  - `lib/` - AI prompt generation, retrieval utilities, Supabase helpers, and app constants
+  - `styles/` - shared style tokens and theme variables
+- `server/`
+  - `index.js` - Express backend proxying AI requests and handling mood honesty analysis
+- `public/` - static assets like icons
+
+## Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create `.env` files:
+
+- Frontend: `.env` or `.env.local`
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
+  - `VITE_API_URL`
+
+- Backend: `server/.env`
+  - `OPENAI_API_KEY` (or equivalent for the AI provider used by the backend)
+
+3. Start development servers:
+
+```bash
+npm run dev
+npm --prefix server install
+npm --prefix server start
+```
+
+## Deployment Notes
+
+- Ensure `VITE_API_URL` points to the deployed backend endpoint.
+- The backend proxy is required for AI requests to avoid exposing API keys in the frontend.
+- Supabase auth and DB must be configured with the correct project URL and anon key.
+
+## Important Files
+
+- `src/lib/api.ts` - centralizes API URL validation
+- `server/index.js` - handles API proxying and rate-limited AI requests
+- `src/hooks/useJournal.ts` - manages journal entry submission and retrieval
+- `src/hooks/useInsights.ts` - computes insights and caching logic
+
+
+

@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react'
+import {useEffect } from 'react'
 import type { AppLanguage } from '../types'
 
 export function useLanguage() {
+  
 
-  const [language, setLanguage] = useState<AppLanguage>(() => {
-    const saved = localStorage.getItem('Moodistic_language')
-    return (saved as AppLanguage) || 'en'
-  })
-
+  
   useEffect(() => {
-    localStorage.setItem('Moodistic_language', language)
-  }, [language])
+    localStorage.removeItem('Moodistic_language')
+  }, [])
 
-  return { language, setLanguage }
+  return { 
+    language: 'en' as AppLanguage, 
+    setLanguage: () => {} 
+  }
 }

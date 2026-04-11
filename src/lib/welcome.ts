@@ -1,10 +1,11 @@
 import type { JournalEntry } from '../types'
+import { API_URL } from "./api";
 
 export async function getWelcomeMessage(
   entries: JournalEntry[]
 ): Promise<string> {
 
-  const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
+  
 
   if (entries.length === 0) {
     return "hey, welcome to Moodistic! this is your private space — no judgment, no pressure. whenever you're ready, just start talking."

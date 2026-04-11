@@ -1,6 +1,6 @@
 import type { JournalEntry } from "../types";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+import { API_URL } from "./api";
 
 export async function getInsights(entries: JournalEntry[]): Promise<string> {
   if (!entries.length) return "";

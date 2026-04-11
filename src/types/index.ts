@@ -20,7 +20,7 @@ export interface ChatMessage {
   timestamp: Date
 }
 
-export type AppLanguage = 'en' | 'hi' | 'mr'
+export type AppLanguage = 'en'
 
 export interface LanguageOption {
   code: AppLanguage

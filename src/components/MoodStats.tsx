@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { JournalEntry } from "../types";
-import { checkMoodMismatch } from "../lib/retrieval";
+import { batchCheckMoodMismatch } from "../lib/retrieval";
 
 interface Props {
   entries: JournalEntry[];
@@ -9,19 +9,26 @@ interface Props {
 export default function MoodStats({ entries }: Props) {
   const [honestEntries, setHonestEntries] = useState<JournalEntry[]>([]);
 
-  useEffect(() => {
-    if (entries.length === 0) return;
+      useEffect(() => {
+    if (entries.length === 0) {
+      setHonestEntries([]);
+      return;
+    }
 
     const correct = async () => {
       const toAnalyze = entries.slice(0, 10);
-      const corrected: JournalEntry[] = [];
 
-      for (const entry of toAnalyze) {
-        const mismatch = await checkMoodMismatch(
-          entry.content,
-          entry.mood_score,
-        );
-        corrected.push({
+      
+      const mismatchResults = await batchCheckMoodMismatch(
+        toAnalyze.map(e => ({
+          content: e.content,
+          mood_score: e.mood_score
+        }))
+      );
+
+      const corrected: JournalEntry[] = toAnalyze.map((entry, index) => {
+        const mismatch = mismatchResults[index] || 'honest';
+        return {
           ...entry,
           mood_score:
             mismatch === "masked"
@@ -29,9 +36,8 @@ export default function MoodStats({ entries }: Props) {
               : mismatch === "reverse_masked"
                 ? 4
                 : entry.mood_score,
-        });
-        await new Promise((resolve) => setTimeout(resolve, 300));
-      }
+        };
+      });
 
       setHonestEntries(corrected);
     };

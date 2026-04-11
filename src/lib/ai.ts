@@ -4,7 +4,7 @@ import type { AppLanguage } from '../types'
 import { detectUserStyle } from './personality'
 import type { UserMemory } from './memory'
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
+import { API_URL } from "./api";
 
 const userMessageCounts = new Map<string, { count: number, date: string }>()
 

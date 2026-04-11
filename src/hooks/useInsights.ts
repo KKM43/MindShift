@@ -8,11 +8,22 @@ export function useInsights(entries: JournalEntry[]) {
 
   useEffect(() => {
     if (!entries.length) {
+      setInsights("");
       setLoading(false);
       return;
     }
 
-    const cacheKey = `insights_${entries.length}`;
+
+    const entryIds = entries
+      .map(e => e.id)
+      .sort()
+      .join("-");
+
+    const lastUpdated = entries.length > 0
+      ? new Date(entries[0].created_at).getTime()
+      : 0;
+
+    const cacheKey = `insights_${entries.length}_${entryIds}_${lastUpdated}`;
 
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -27,8 +38,8 @@ export function useInsights(entries: JournalEntry[]) {
 
         setInsights(result);
         localStorage.setItem(cacheKey, result);
-      } catch {
-
+      } catch (err) {
+        console.warn("Failed to generate insights:", err);
         setInsights(getFallbackInsights(entries));
       } finally {
         setLoading(false);
@@ -40,7 +51,6 @@ export function useInsights(entries: JournalEntry[]) {
 
   return { insights, loading };
 }
-
 
 function getFallbackInsights(entries: JournalEntry[]): string {
   const avg =

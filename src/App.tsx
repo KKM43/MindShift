@@ -43,6 +43,7 @@ export default function App() {
         path="/insights"
         element={user ? <InsightsPage /> : <Navigate to="/auth" replace />}
       />
+
       <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       <Route

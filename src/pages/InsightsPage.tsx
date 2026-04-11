@@ -23,7 +23,7 @@ export default function InsightsPage() {
     <div className="journal-layout">
       <Sidebar entryCount={entries.length} />
 
-      <main className="journal-main">
+      <main className="journal-main insights-main">
         <div className="insights-view">
           <div className="journal-header">
             <h2 className="journal-title">Your Insights</h2>
@@ -39,8 +39,6 @@ export default function InsightsPage() {
               <MoodStats entries={entries} />
               <InsightsCard insights={insights} loading={insightsLoading} />
 
-              
-
               <div className="dashboard-grid">
                 <div className="dashboard-card mood-trend-card">
                   <h3 className="section-heading">Mood Over Time</h3>
@@ -49,7 +47,7 @@ export default function InsightsPage() {
                   <div className="calendar-section">
                     <h3 className="section-heading">6-Month Mood Calendar</h3>
                     <p className="section-subheading">
-                      Each square is a day. Hover to see what you wrote.
+                      Each square is a day. Hover/tap to see what you wrote.
                     </p>
                     <MoodHeatmap entries={entries} />
                   </div>
@@ -84,8 +82,8 @@ export default function InsightsPage() {
                             </span>
                           </div>
                           <p className="entry-content">
-                            {entry.ai_response?.length > 135
-                              ? entry.ai_response.slice(0, 135) + "..."
+                            {entry.ai_response?.length > 120
+                              ? entry.ai_response.slice(0, 120) + "..."
                               : entry.ai_response || "No summary yet."}
                           </p>
                           <span className="view-in-past">

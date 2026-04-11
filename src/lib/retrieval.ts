@@ -1,6 +1,6 @@
 import type { JournalEntry } from '../types'
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
+import { API_URL } from "./api";
 
 
 const EMOTION_MAP: Record<string, string[]> = {
@@ -220,6 +220,50 @@ export async function checkMoodMismatch(
   if (tone === 'negative' && moodScore >= 4) return 'masked'
   if (tone === 'positive' && moodScore <= 2) return 'reverse_masked'
   return 'honest'
+}
+
+
+export async function batchCheckMoodMismatch(
+  entries: Array<{ content: string; mood_score: number }>
+): Promise<Array<'masked' | 'reverse_masked' | 'honest'>> {
+  if (entries.length === 0) return [];
+
+  try {
+    const response = await fetch(`${API_URL}/api/analyze-mood-honesty`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entries })
+    });
+
+    if (!response.ok) {
+      throw new Error('Batch analysis failed');
+    }
+
+    const { analysis } = await response.json();
+
+    return analysis.map((item: any) => {
+      const result = item.result?.toLowerCase();
+      if (result === 'masked' || result === 'reverse_masked') {
+        return result;
+      }
+      return 'honest';
+    });
+
+  } catch (err) {
+    console.warn('Batch mood analysis failed, falling back to individual:', err);
+    
+    
+    const results: Array<'masked' | 'reverse_masked' | 'honest'> = [];
+    for (const entry of entries) {
+      try {
+        const res = await checkMoodMismatch(entry.content, entry.mood_score);
+        results.push(res);
+      } catch {
+        results.push('honest');
+      }
+    }
+    return results;
+  }
 }
 
 const CRISIS_SIGNALS = [

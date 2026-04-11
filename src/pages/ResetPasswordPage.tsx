@@ -1,42 +1,57 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
 
 export default function ResetPasswordPage() {
-  const { updatePassword } = useAuth();
+  const { updatePassword, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [ready, setReady] = useState(false);
-  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
+    const handleRecovery = async () => {
+      const hash = location.hash;
+      const hasRecoveryToken =
+        hash.includes("access_token") || hash.includes("type=recovery");
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        if (hasRecoveryToken || location.pathname === "/reset-password") {
+          setReady(true);
+
+          if (hash) {
+            window.history.replaceState(null, "", "/reset-password");
+          }
+        } else {
+          navigate("/journal", { replace: true });
+        }
+      } else {
+        setReady(true);
+      }
+    };
+
+    handleRecovery();
+
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth event:", event, "Session:", session);
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
         setReady(true);
       }
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Current session:", session);
-      if (session) setReady(true);
-    });
-
-    const timeout = setTimeout(() => {
-      setExpired(true);
-    }, 8000);
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
-  }, []);
+    return () => subscription.unsubscribe();
+  }, [location.hash, navigate]);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,33 +68,33 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     const { error } = await updatePassword(password);
+
     if (error) {
       setError(error.message);
+      setLoading(false);
     } else {
-      navigate("/journal");
+      setSuccess(true);
+
+      setTimeout(async () => {
+        await signOut();
+        navigate("/auth", { replace: true });
+      }, 1800);
     }
-    setLoading(false);
   };
 
-  if (expired && !ready) {
+  if (success) {
     return (
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-brand">
-            <span className="brand-icon">⚠️</span>
-            <h1 className="brand-name">Link expired</h1>
+            <span className="brand-icon">✅</span>
+            <h1 className="brand-name">Password Updated</h1>
             <p className="brand-tagline">
-              This reset link has expired or already been used. Please request a
-              new one.
+              Your password has been reset successfully.
+              <br />
+              Redirecting to login...
             </p>
           </div>
-          <button
-            className="auth-btn"
-            style={{ marginTop: "24px" }}
-            onClick={() => navigate("/auth")}
-          >
-            Request New Link
-          </button>
         </div>
       </div>
     );

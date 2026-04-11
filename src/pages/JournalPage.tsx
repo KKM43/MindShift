@@ -59,30 +59,68 @@ export default function JournalPage({ showHistory = false }: Props) {
   }, [user?.id]);
 
   useEffect(() => {
-    if (loadingEntries) return;
+    const handlePopState = () => {
+      if (!showHistory && !selectedEntry) {
+        window.history.pushState(null, "", window.location.pathname);
 
-    const timer = setTimeout(async () => {
+        if (sessionState === "chatting" && messages.length > 1) {
+          setShowDiscardModal(true);
+        } else {
+          setShowSignOutModal(true);
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    window.history.pushState(null, "", window.location.pathname);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [showHistory, selectedEntry, sessionState, messages.length]);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedEntry) {
+        setSelectedEntry(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [selectedEntry]);
+
+  useEffect(() => {
+    if (loadingEntries) {
       setWelcomeLoading(true);
-      const msg = await getWelcomeMessage(entries);
-      setWelcomeMessage(msg);
-      setWelcomeLoading(false);
-    }, 100);
-
-    return () => clearTimeout(timer);
+      return;
+    }
 
     const loadWelcome = async () => {
       setWelcomeLoading(true);
-      const msg = await getWelcomeMessage(entries);
-      setWelcomeMessage(msg);
-      setWelcomeLoading(false);
+      try {
+        const msg = await getWelcomeMessage(entries);
+        setWelcomeMessage(msg);
+      } catch (err) {
+        console.warn("Failed to load welcome message:", err);
+        setWelcomeMessage("Welcome back! Ready to reflect today? 🌱");
+      } finally {
+        setWelcomeLoading(false);
+      }
     };
 
     loadWelcome();
-  }, [loadingEntries]);
+  }, [loadingEntries, entries]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  const handleSignOutWithoutSaving = async () => {
+  setShowDiscardModal(false);
+  await signOut();   // Just sign out, discard current session
+};
 
   const handleSignOutClick = () => {
     if (sessionState === "chatting" && messages.length > 1) {
@@ -97,7 +135,6 @@ export default function JournalPage({ showHistory = false }: Props) {
 
     await endSession();
     await signOut();
-    signOut();
   };
 
   const startSession = () => {
@@ -151,8 +188,6 @@ export default function JournalPage({ showHistory = false }: Props) {
       const ragInput = `${lastContext} ${userText}`;
 
       const relevantPast = retrieveRelevantEntries(ragInput, entries, mood, 2);
-
-      console.log("RAG selected entries:", relevantPast);
 
       const userMemory = buildUserMemory(entries);
 
@@ -467,6 +502,7 @@ export default function JournalPage({ showHistory = false }: Props) {
                   <button
                     className="back-btn"
                     onClick={() => setSelectedEntry(null)}
+                    style={{ minHeight: "52px" }}
                   >
                     ← Back to all sessions
                   </button>
@@ -496,7 +532,7 @@ export default function JournalPage({ showHistory = false }: Props) {
                     className="entry-ai-text"
                     style={{ fontSize: "15px", lineHeight: "1.7" }}
                   >
-                    {selectedEntry.ai_response}
+                    {selectedEntry.ai_response || "No summary available"}
                   </p>
                 </div>
 
@@ -603,28 +639,33 @@ export default function JournalPage({ showHistory = false }: Props) {
         )}
       </main>
 
-      {showSignOutModal && (
-        <ConfirmModal
-          title="Sign out?"
-          message="You'll need to log back in to access your journal."
-          confirmLabel="Yes, sign out"
-          cancelLabel="Stay"
-          danger={true}
-          onConfirm={signOut}
-          onCancel={() => setShowSignOutModal(false)}
-        />
-      )}
+      {/* Sign Out Modal (Normal case) */}
+{showSignOutModal && (
+  <ConfirmModal
+    title="Sign out?"
+    message="You'll need to log back in to access your journal."
+    confirmLabel="Yes, sign out"
+    cancelLabel="Stay"
+    danger={true}
+    onConfirm={signOut}
+    onCancel={() => setShowSignOutModal(false)}
+  />
+)}
 
-      {showDiscardModal && (
-        <ConfirmModal
-          title="You have an unsaved session"
-          message="If you leave now your conversation will be lost. Do you want to save it first?"
-          confirmLabel="Save & Sign Out"
-          cancelLabel="Stay"
-          onConfirm={handleSaveAndSignOut}
-          onCancel={() => setShowDiscardModal(false)}
-        />
-      )}
+{/* Discard / Unsaved Session Modal - Now with 3 options */}
+{showDiscardModal && (
+  <ConfirmModal
+    title="Unsaved Session"
+    message="You have an ongoing conversation that hasn't been saved yet."
+    confirmLabel="Save & Sign Out"
+    cancelLabel="Cancel"
+    thirdLabel="Sign Out Without Saving"
+    thirdDanger={true}
+    onConfirm={handleSaveAndSignOut}
+    onThirdAction={handleSignOutWithoutSaving}
+    onCancel={() => setShowDiscardModal(false)}
+  />
+)}
     </div>
   );
 }
