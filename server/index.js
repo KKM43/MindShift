@@ -16,12 +16,13 @@ if (!process.env.FRONTEND_URL) {
 const app = express();
 
 
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
   "https://moodistic-omega.vercel.app",     
   "https://moodistic.vercel.app",           
-  process.env.FRONTEND_URL,                 
+  process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(
@@ -41,7 +42,7 @@ app.use(
 );
 
 
-app.options("*", cors());
+app.options("/*splat", cors());
 
 app.use(express.json({ limit: "10mb" }));
 
