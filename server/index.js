@@ -3,7 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 if (!process.env.GROQ_API_KEY) {
-  console.error("❌ Missing GROQ_API_KEY environment variable");
+  console.error("Missing GROQ_API_KEY environment variable");
   process.exit(1);
 }
 
